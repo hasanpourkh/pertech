@@ -2,18 +2,18 @@ require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2/promise");
 const cors = require("cors");
-
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// اطلاعات اتصال به MySQL (اطمینان حاصل کن که این مقادیر با XAMPP هماهنگ باشند)
+// اطلاعات اتصال به MySQL
 const MYSQL_HOST = process.env.MYSQL_HOST || "localhost";
 const MYSQL_USER = process.env.MYSQL_USER || "root";
 const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD || "";
-const MAIN_DB = process.env.MAIN_DB || "pertech_db"; // دیتابیس اصلی برای ثبت شرکت‌ها
+const MAIN_DB = process.env.MAIN_DB || "pertech_db";
+const PORT = process.env.PORT || 4000;
 
-// اتصال عمومی به MySQL (بدون دیتابیس)
+// اتصال به دیتابیس
 async function getConnection(db = null) {
   return await mysql.createConnection({
     host: MYSQL_HOST,
@@ -24,7 +24,7 @@ async function getConnection(db = null) {
   });
 }
 
-// ایجاد دیتابیس اولیه pertech_db و جدول ثبت شرکت‌ها و کاربران اصلی
+// ایجاد دیتابیس اصلی و جداول
 async function initMainDatabase() {
   const conn = await getConnection();
   await conn.query(`CREATE DATABASE IF NOT EXISTS \`${MAIN_DB}\`;`);
@@ -50,12 +50,11 @@ async function initMainDatabase() {
   await conn.end();
 }
 
-// ایجاد دیتابیس اختصاصی برای هر شرکت با حداقل جدول کاربران
+// ایجاد دیتابیس برای شرکت جدید
 async function createCompanyDatabase(companyDbName) {
   const conn = await getConnection();
   await conn.query(`CREATE DATABASE IF NOT EXISTS \`${companyDbName}\`;`);
   await conn.changeUser({ database: companyDbName });
-  // جدول محصولات نمونه
   await conn.query(`
     CREATE TABLE IF NOT EXISTS products (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -65,7 +64,6 @@ async function createCompanyDatabase(companyDbName) {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `);
-  // جدول کاربران شرکت
   await conn.query(`
     CREATE TABLE IF NOT EXISTS users (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -78,7 +76,7 @@ async function createCompanyDatabase(companyDbName) {
   await conn.end();
 }
 
-// ثبت‌نام شرکت (ایجاد دیتابیس و مدیر)
+// ثبت شرکت جدید (ثبت‌نام)
 app.post("/api/register-company", async (req, res) => {
   const { companyName, adminUsername, adminPassword } = req.body;
   if (!companyName || !adminUsername || !adminPassword)
@@ -86,23 +84,23 @@ app.post("/api/register-company", async (req, res) => {
 
   const companyDbName = `pertech_${companyName.replace(/\s+/g, "_").toLowerCase()}`;
   try {
-    // ایجاد دیتابیس شرکت و جداول مربوطه
+    // ایجاد دیتابیس شرکت
     await createCompanyDatabase(companyDbName);
 
-    // ذخیره شرکت در دیتابیس اصلی
+    // ثبت شرکت در دیتابیس اصلی
     const conn = await getConnection(MAIN_DB);
     await conn.query(
       "INSERT INTO companies (name, db_name) VALUES (?, ?)",
       [companyName, companyDbName]
     );
-    // ذخیره یوزر ادمین در دیتابیس اصلی
+    // ثبت یوزر ادمین در دیتابیس اصلی
     await conn.query(
       "INSERT INTO users (username, password, company_db, role) VALUES (?, ?, ?, 'admin')",
       [adminUsername, adminPassword, companyDbName]
     );
     await conn.end();
 
-    // ذخیره یوزر ادمین در دیتابیس شرکت
+    // ثبت یوزر ادمین در دیتابیس شرکت
     const conn2 = await getConnection(companyDbName);
     await conn2.query(
       "INSERT INTO users (username, password, role) VALUES (?, ?, 'admin')",
@@ -116,7 +114,7 @@ app.post("/api/register-company", async (req, res) => {
   }
 });
 
-// ورود (login)
+// ورود کاربر
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const conn = await getConnection(MAIN_DB);
@@ -139,11 +137,10 @@ app.post("/api/login", async (req, res) => {
   });
 });
 
-// افزودن کارمند جدید به شرکت (فقط ادمین شرکت)
+// افزودن کارمند به شرکت (فقط ادمین)
 app.post("/api/:companyDb/add-employee", async (req, res) => {
   const { companyDb } = req.params;
   const { username, password } = req.body;
-
   if (!username || !password)
     return res.status(400).json({ error: "نام کاربری و رمز عبور لازم است" });
 
@@ -160,7 +157,7 @@ app.post("/api/:companyDb/add-employee", async (req, res) => {
   }
 });
 
-// دریافت لیست محصولات (کاربران شرکت)
+// دریافت لیست محصولات شرکت
 app.get("/api/:companyDb/products", async (req, res) => {
   const { companyDb } = req.params;
   try {
@@ -173,10 +170,13 @@ app.get("/api/:companyDb/products", async (req, res) => {
   }
 });
 
-// افزودن محصول جدید
+// افزودن محصول جدید به شرکت
 app.post("/api/:companyDb/products", async (req, res) => {
   const { companyDb } = req.params;
   const { name, price, stock } = req.body;
+  if (!name || price == null || stock == null)
+    return res.status(400).json({ error: "همه فیلدها اجباری است" });
+
   try {
     const conn = await getConnection(companyDb);
     await conn.query(
@@ -190,8 +190,7 @@ app.post("/api/:companyDb/products", async (req, res) => {
   }
 });
 
-// راه‌اندازی سرور و دیتابیس اصلی
-const PORT = process.env.PORT || 4000;
+// شروع سرور و آماده‌سازی دیتابیس اصلی
 initMainDatabase().then(() => {
   app.listen(PORT, () => {
     console.log(`pertech backend running on port ${PORT}`);
