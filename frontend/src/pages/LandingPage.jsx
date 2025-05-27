@@ -8,8 +8,8 @@ export default function LandingPage() {
           <span className="text-secondary">PerTech</span> حسابداری ابری
         </h1>
         <nav>
-          <Link to="/login" className="btn-secondary ml-2">ورود</Link>
-          <Link to="/register" className="btn-primary">ثبت‌نام شرکت</Link>
+          <Link to="/login" className="px-6 py-2 rounded-full font-bold text-blue-700 border-2 border-blue-700 bg-white hover:bg-blue-700 hover:text-white transition duration-150 ml-2">ورود</Link>
+          <Link to="/register" className="px-8 py-3 rounded-full font-bold text-white bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200">ثبت‌نام شرکت</Link>
         </nav>
       </header>
       <main className="flex-1 flex flex-col-reverse md:flex-row items-center justify-center px-8 py-12">
@@ -23,7 +23,7 @@ export default function LandingPage() {
             مدیریت کامل محصولات، فروش، کاربران و گزارش‌ها.<br />
             امنیت بالا، رابط کاربری فارسی و دسترسی ابری.
           </p>
-          <Link to="/register" className="btn-primary text-lg w-fit">شروع رایگان</Link>
+          <Link to="/register" className="px-8 py-3 rounded-full font-bold text-white bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 text-lg w-fit">شروع رایگان</Link>
         </section>
         <section className="flex-1 flex items-center justify-center mb-8 md:mb-0">
           <div className="relative">

@@ -10,9 +10,13 @@ export default {
       },
       extend: {
         colors: {
-          primary: "#6842ff",
-          secondary: "#a855f7",
-          accent: "#1e40af"
+          primary: "#7c3aed",
+          secondary: "#06b6d4",
+          accent: "#f59e42",
+          dark: "#21213a"
+        },
+        boxShadow: {
+          'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.17)'
         }
       },
     },
