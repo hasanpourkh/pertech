@@ -2,44 +2,42 @@ import { Link } from "react-router-dom";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-100 via-purple-100 to-pink-50">
-      <header className="w-full px-6 py-4 flex justify-between items-center bg-white/80 shadow-md">
-        <h1 className="text-2xl font-extrabold text-blue-700 tracking-tight">
-          <span className="text-purple-700">PerTech</span> حسابداری حرفه‌ای
+    <div className="min-h-screen flex flex-col bg-gradient-to-tr from-[#f0f4ff] via-[#e7d0ff] to-[#f7e1ff]">
+      <header className="w-full px-8 py-5 flex justify-between items-center bg-white/70 shadow-lg z-10 backdrop-blur">
+        <h1 className="text-3xl font-extrabold text-primary drop-shadow">
+          <span className="text-secondary">PerTech</span> حسابداری ابری
         </h1>
-        <div>
-          <Link to="/login" className="px-5 py-2 text-blue-700 hover:text-white border-2 border-blue-700 rounded-full font-bold mr-2 hover:bg-blue-700 transition">
-            ورود
-          </Link>
-          <Link to="/register" className="px-5 py-2 text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-full font-bold hover:scale-105 transition">
-            ثبت‌نام شرکت
-          </Link>
-        </div>
+        <nav>
+          <Link to="/login" className="btn-secondary ml-2">ورود</Link>
+          <Link to="/register" className="btn-primary">ثبت‌نام شرکت</Link>
+        </nav>
       </header>
-      <main className="flex-1 flex flex-col md:flex-row items-center justify-center py-20 px-8">
-        <section className="flex-1 flex flex-col items-start md:items-end md:pr-12 mb-8 md:mb-0">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4 leading-tight text-end">
-            حسابداری آسان و <span className="text-purple-600">هوشمند</span> <br />
-            برای <span className="text-blue-700">شرکت‌ها</span> و <span className="text-pink-600">کسب‌وکارها</span>
+      <main className="flex-1 flex flex-col-reverse md:flex-row items-center justify-center px-8 py-12">
+        <section className="flex-1 flex flex-col items-center md:items-end md:pr-12 space-y-6">
+          <h2 className="text-5xl font-black text-primary text-end leading-tight drop-shadow-lg">
+            آینده حسابداری<br />
+            <span className="text-secondary">هوشمند و امن</span>
           </h2>
-          <p className="text-lg text-gray-600 mb-8 text-end">
-            با PerTech هر شرکت دیتابیس جداگانه و امنیت اطلاعات! <br />
-            مدیریت محصولات، فروش، کاربران و گزارش‌های پیشرفته فقط با چند کلیک.
+          <p className="text-xl text-gray-700 text-end max-w-xl">
+            هر شرکت دیتابیس اختصاصی!<br />
+            مدیریت کامل محصولات، فروش، کاربران و گزارش‌ها.<br />
+            امنیت بالا، رابط کاربری فارسی و دسترسی ابری.
           </p>
-          <Link to="/register" className="px-8 py-3 rounded-full font-bold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:scale-105 transition text-lg">
-            همین حالا شروع کنید
-          </Link>
+          <Link to="/register" className="btn-primary text-lg w-fit">شروع رایگان</Link>
         </section>
-        <section className="flex-1 flex justify-center items-center">
-          <img
-            src="https://cdn.dribbble.com/users/2005975/screenshots/15118162/media/0e2e7f67f08a7e399e9b8ed6d8f7cdbf.png"
-            alt="حسابداری مدرن"
-            className="rounded-3xl shadow-2xl w-96 max-w-full"
-          />
+        <section className="flex-1 flex items-center justify-center mb-8 md:mb-0">
+          <div className="relative">
+            <img
+              src="https://assets-global.website-files.com/61e6e8ac4a52463b3b5d8fdb/63fbf35f3b7f5dbe874f1c20_dashboard-2-crypto-template.png"
+              alt="داشبورد حسابداری"
+              className="rounded-2xl shadow-2xl border-4 border-white w-[420px] max-w-full"
+            />
+            <div className="absolute -left-6 -top-6 w-24 h-24 rounded-full bg-gradient-to-tr from-blue-400 to-purple-300 blur-2xl opacity-30 animate-pulse"></div>
+          </div>
         </section>
       </main>
-      <footer className="text-center text-gray-400 py-4 bg-white/60">
-        © {new Date().getFullYear()} PerTech | توسعه توسط تیم شما
+      <footer className="text-center text-gray-400 py-6 bg-white/50 backdrop-blur border-t border-[#e7e3fa] mt-8">
+        © {new Date().getFullYear()} PerTech | توسعه داده شده با ❤️ توسط تیم شما
       </footer>
     </div>
   );
